@@ -3,6 +3,9 @@
 
 class WindowManager {
 public:
+
+	typedef void (*MouseMoveCallbackFunction)(bool*, int x, int y);
+
 	struct WindowCreateInfo {
 		std::string title;
 		int width;
@@ -35,6 +38,18 @@ public:
 	* @return is opengl context creation successfull
 	*/
 	bool createGLContext();
+	/**
+	* Returns Window Handle
+	* @param none
+	* @return void pointer window handle (Returns nullptr on linux)
+	*/
+	void* win32_getWindowHandle();
+	/**
+	* Set Mouse move callback function
+	* @param MouseMoveCallbackFunction
+	* @return void
+	*/
+	void setMouseMoveCallbackFunction(MouseMoveCallbackFunction mmcf);
 
 	~WindowManager();
 };

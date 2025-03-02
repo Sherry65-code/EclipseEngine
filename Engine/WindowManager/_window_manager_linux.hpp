@@ -18,6 +18,11 @@ bool WindowManager::createGLContext() {
     return false;
 }
 
+void* WindowManager::win32_getWindowHandle() {
+    // Returns nullptr because it is a windows function
+    return nullptr;
+}
+
 WindowManager::~WindowManager() {
 
 }

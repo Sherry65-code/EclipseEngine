@@ -8,6 +8,10 @@
 std::unique_ptr<WindowManager> window_manager;
 std::shared_ptr<EclipseRenderer> renderer;
 
+static void mouse_move_callback(bool* mousedown, int x, int y) {
+	renderer->pass_mouse_info(mousedown, x, y);
+}
+
 int main() {
 	// Fill Window Creation Struct
 	WindowManager::WindowCreateInfo window_create_info{};
@@ -24,6 +28,9 @@ int main() {
 		std::exit(EXIT_FAILURE);
 	}
 
+	// Set Mouse move callback function
+	window_manager->setMouseMoveCallbackFunction(mouse_move_callback);
+
 	// Initialize OpenGL Context
 	if (!window_manager->createGLContext()) {
 		io::logMessage(io::LogLevel::EERROR, "Failed to create OpenGL Context!");
@@ -32,16 +39,25 @@ int main() {
 
 	renderer = CreateGLRenderer();
 	
-	if (!renderer->init_renderer()) {
+	if (!renderer->init_renderer(window_manager->win32_getWindowHandle(), "#version 330")) {
 		io::logMessage(io::LogLevel::EERROR, "Failed to intialize renderer!");
 		std::exit(EXIT_FAILURE);
 	}
 
 	// Mainloop
 	while (!window_manager->shouldClose()) {
-		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
+		renderer->start_ui_recording();
+
+		if (ImGui::Begin("Debugger")) {
+			ImGui::Text("Just wanted to say hello :)");
+		}
+		ImGui::End();
+
+		renderer->stop_ui_recording();
+
 		window_manager->update();
 	}
 

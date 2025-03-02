@@ -13,11 +13,68 @@ HDC hdc;
 HGLRC hglrc;
 bool quit;
 bool gl;
+WindowManager::MouseMoveCallbackFunction mouse_move_callback;
+bool* mouse_buttons = (bool*)malloc(sizeof(bool)*3);
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
+    case WM_MOUSEMOVE:
+        if (mouse_move_callback) {
+            int xpos = LOWORD(lParam);
+            int ypos = HIWORD(lParam);
+            mouse_move_callback(mouse_buttons, xpos, ypos);
+        }
+        break;
+    case WM_LBUTTONDOWN:
+        mouse_buttons[0] = true;  // Left mouse button pressed
+        if (mouse_move_callback) {
+            int xpos = LOWORD(lParam);
+            int ypos = HIWORD(lParam);
+            mouse_move_callback(mouse_buttons, xpos, ypos);
+        }
+        break;
+    case WM_LBUTTONUP:
+        mouse_buttons[0] = false; // Left mouse button released
+        if (mouse_move_callback) {
+            int xpos = LOWORD(lParam);
+            int ypos = HIWORD(lParam);
+            mouse_move_callback(mouse_buttons, xpos, ypos);
+        }
+        break;
+    case WM_RBUTTONDOWN:
+        mouse_buttons[1] = true;  // Right mouse button pressed
+        if (mouse_move_callback) {
+            int xpos = LOWORD(lParam);
+            int ypos = HIWORD(lParam);
+            mouse_move_callback(mouse_buttons, xpos, ypos);
+        }
+        break;
+    case WM_RBUTTONUP:
+        mouse_buttons[1] = false; // Right mouse button released
+        if (mouse_move_callback) {
+            int xpos = LOWORD(lParam);
+            int ypos = HIWORD(lParam);
+            mouse_move_callback(mouse_buttons, xpos, ypos);
+        }
+        break;
+    case WM_MBUTTONDOWN:
+        mouse_buttons[2] = true;  // Middle mouse button pressed
+        if (mouse_move_callback) {
+            int xpos = LOWORD(lParam);
+            int ypos = HIWORD(lParam);
+            mouse_move_callback(mouse_buttons, xpos, ypos);
+        }
+        break;
+    case WM_MBUTTONUP:
+        mouse_buttons[2] = false; // Middle mouse button released
+        if (mouse_move_callback) {
+            int xpos = LOWORD(lParam);
+            int ypos = HIWORD(lParam);
+            mouse_move_callback(mouse_buttons, xpos, ypos);
+        }
+        break;
     case WM_CLOSE:
         DestroyWindow(hwnd);
         break;
@@ -77,6 +134,10 @@ bool WindowManager::createNewWindow(WindowCreateInfo& window_create_info) {
 
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
+
+    mouse_buttons[0] = 0;
+    mouse_buttons[1] = 0;
+    mouse_buttons[2] = 0;
 
     return true;
 }
@@ -146,6 +207,14 @@ bool WindowManager::createGLContext() {
     return true;
 }
 
+void* WindowManager::win32_getWindowHandle() {
+    return hwnd;
+}
+
+void WindowManager::setMouseMoveCallbackFunction(MouseMoveCallbackFunction mmcf) {
+    mouse_move_callback = mmcf;
+}
+
 WindowManager::~WindowManager() {
     if (hwnd != NULL) {
         DestroyWindow(hwnd);
@@ -157,4 +226,6 @@ WindowManager::~WindowManager() {
         }
     }
     UnregisterClass(g_szClassName, GetModuleHandle(NULL));
+    
+    free(mouse_buttons);
 }
