@@ -89,6 +89,7 @@ void WindowManager::update() {
         TranslateMessage(&Msg);
         DispatchMessage(&Msg);
     }
+    SwapBuffers(hdc);
 }
 
 bool WindowManager::shouldClose() {

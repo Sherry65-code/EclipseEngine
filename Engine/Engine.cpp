@@ -39,7 +39,7 @@ int main() {
 
 	// Mainloop
 	while (!window_manager->shouldClose()) {
-		glClearColor(0.9216, 0.2039, 0.6431, 0.0f);
+		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		window_manager->update();
