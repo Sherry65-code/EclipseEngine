@@ -6,7 +6,8 @@
 struct EclipseRenderer {
 	/**
 	* Initializes renderer
-	* @param hwnd: Window handle version: opengl version (for example: "#version 330")
+	* @param hwnd: Window handle 
+	* @param version: opengl version (for example: "#version 330")
 	* @return did initalization succeed
 	*/
 	bool (*init_renderer)(void* hwnd, const char* version);
@@ -26,7 +27,9 @@ struct EclipseRenderer {
 	bool (*cleanup)();
 	/**
 	* Passes mouse information to UI
-	* @param mousebuttons: array for mouse down info, x: x coord mouse position, y: y coord mouse position
+	* @param mousebuttons: array for mouse down info
+	* @param x: x coord mouse position
+	* @param y: y coord mouse position
 	* @return void
 	*/
 	void (*pass_mouse_info)(bool* mousebuttons, int x, int y);

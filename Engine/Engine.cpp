@@ -2,6 +2,8 @@
 #include <Engine/Renderer/Renderer.hpp>
 #include <Engine/Standard/IO.hpp>
 
+#include <Engine/FileSystem/FS.hpp>
+
 #include <memory>
 
 // Global vars
@@ -44,6 +46,10 @@ int main() {
 		std::exit(EXIT_FAILURE);
 	}
 
+	// TEST
+	
+	// TEST END
+
 	// Mainloop
 	while (!window_manager->shouldClose()) {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -52,7 +58,7 @@ int main() {
 		renderer->start_ui_recording();
 
 		if (ImGui::Begin("Debugger")) {
-			ImGui::Text("Just wanted to say hello :)");
+			ImGui::Text("Chill mode on");
 		}
 		ImGui::End();
 
