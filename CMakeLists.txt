@@ -9,6 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(".")
 
-file(GLOB_RECURSE EngineCode "Engine/*")
+file(GLOB_RECURSE EngineCode "Engine/*.cpp" "Engine/*.hpp" "Engine/*.c")
 
 add_executable(${PROJECT_NAME} ${EngineCode})
