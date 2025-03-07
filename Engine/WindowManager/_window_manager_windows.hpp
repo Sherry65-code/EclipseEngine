@@ -1,5 +1,5 @@
 #include "WindowManager.hpp"
-
+#if _WIN64
 #include <Windows.h>
 #include <Engine/Standard/IO.hpp>
 #include <gl/GL.h>
@@ -113,17 +113,17 @@ bool WindowManager::createNewWindow(WindowCreateInfo& window_create_info) {
 
     // Create Window
     hwnd = CreateWindowEx(
-        WS_EX_CLIENTEDGE, 
-        g_szClassName, 
-        window_create_info.title.c_str(), 
-        WS_OVERLAPPEDWINDOW, 
-        CW_USEDEFAULT, 
-        CW_USEDEFAULT, 
-        window_create_info.width, 
-        window_create_info.height, 
-        NULL, 
-        NULL, 
-        hInstance, 
+        WS_EX_CLIENTEDGE,
+        g_szClassName,
+        window_create_info.title.c_str(),
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        window_create_info.width,
+        window_create_info.height,
+        NULL,
+        NULL,
+        hInstance,
         NULL
     );
 
@@ -226,6 +226,7 @@ WindowManager::~WindowManager() {
         }
     }
     UnregisterClass(g_szClassName, GetModuleHandle(NULL));
-    
+
     free(mouse_buttons);
 }
+#endif

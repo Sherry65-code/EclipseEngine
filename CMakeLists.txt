@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(".")
 include_directories("ThirdParty/imgui/")
+include_directories(${CMAKE_SOURCE_DIR}/Engine)
 
 file(GLOB_RECURSE EngineCode "Engine/*.cpp" "Engine/*.hpp" "Engine/*.c")
 file(GLOB_RECURSE IMGUICode "ThirdParty/imgui/*")
