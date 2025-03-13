@@ -1,6 +1,6 @@
 #include "GLRenderer.hpp"
 #include <Engine/Standard/IO.hpp>
-#include <windows.h>
+//#include <windows.h>
 
 bool EGL::_INIT(void* HWND, const char* gl_version) {
 	
