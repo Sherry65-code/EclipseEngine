@@ -55,7 +55,7 @@ public:
 	GLFWwindow* getWindowHandle();
 	
 	#ifdef _WIN32
-	bool switchDarkMode();
+	bool switchDarkMode(bool);
 	#endif
 
 	~WindowManager();

@@ -16,6 +16,7 @@ std::shared_ptr<EclipseRenderer> renderer;
 
 int window_height = -1;
 int window_width = -1;
+bool darkMode{};
 bool isWindowFocused{};
 
 int main() {
@@ -36,10 +37,6 @@ int main() {
 		io::logMessage(io::LogLevel::ERROR, "Failed to create window!");
 		std::exit(EXIT_FAILURE);
 	}
-
-#ifdef _WIN32
-	window_manager->switchDarkMode();
-#endif
 
 	window_manager->setWindowResizeCallbackFunction(WindowResizeCallback);
 	glfwSetWindowFocusCallback(window_manager->getWindowHandle(), WindowFocusCallback);
@@ -72,6 +69,13 @@ int main() {
 		}
 		ImGui::End();
 
+#ifdef _WIN32
+		if (ImGui::Begin("Window Settings")) {
+			if (ImGui::Checkbox("Dark Mode", &darkMode))
+				window_manager->switchDarkMode(darkMode);
+		}
+		ImGui::End();
+#endif
 		renderer->stop_ui_recording();
 
 		window_manager->update();

@@ -64,9 +64,9 @@ GLFWwindow* WindowManager::getWindowHandle() {
 }
 
 #ifdef _WIN32
-bool WindowManager::switchDarkMode() {
+bool WindowManager::switchDarkMode(bool dark) {
 	HWND hwnd = glfwGetWin32Window(window);
-	BOOL darkMode = TRUE;
+	BOOL darkMode = dark;
 	HRESULT hr = DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &darkMode, sizeof(darkMode));
 	if (FAILED(hr)) return false;
 	return true;
