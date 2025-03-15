@@ -1,20 +1,22 @@
 #include "GLUI.hpp"
 
-void EGL::_INIT_IMGUI(void* HWND, const char* gl_version) {
+void EGL::_INIT_IMGUI(GLFWwindow* pwindow, const char* gl_version) {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable keyboard controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable gamepad controls
-	//io.MousePos
 
-	ImGui_ImplWin32_Init(HWND);
+	ImGui::StyleColorsDark();
+
+	ImGui_ImplGlfw_InitForOpenGL(pwindow, true);
 	ImGui_ImplOpenGL3_Init(gl_version);
 }
 
 void EGL::_START_IMGUI_FRAME() {
 	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplWin32_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 }
 
@@ -25,7 +27,7 @@ void EGL::_END_IMGUI_FRAME() {
 
 void EGL::_DELETE_IMGUI() {
 	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplWin32_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 }
 

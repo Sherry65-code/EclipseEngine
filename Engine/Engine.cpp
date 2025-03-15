@@ -1,5 +1,5 @@
-#include <Engine/WindowManager/WindowManager.hpp>
 #include <Engine/Renderer/Renderer.hpp>
+#include <Engine/WindowManager/WindowManager.hpp>
 #include <Engine/Standard/IO.hpp>
 
 #include <Engine/FileSystem/FS.hpp>
@@ -9,10 +9,6 @@
 // Global vars
 std::unique_ptr<WindowManager> window_manager;
 std::shared_ptr<EclipseRenderer> renderer;
-
-static void mouse_move_callback(bool* mousedown, int x, int y) {
-	renderer->pass_mouse_info(mousedown, x, y);
-}
 
 int main() {
 	// Fill Window Creation Struct
@@ -25,24 +21,18 @@ int main() {
 	
 	// Initialize window
 	window_manager = std::make_unique<WindowManager>();
-	if (!window_manager->createNewWindow(window_create_info)) {
-		io::logMessage(io::LogLevel::EERROR, "Failed to create window!");
+	if (window_manager->createNewWindow(window_create_info) != ERROR_NONE) {
+		io::logMessage(io::LogLevel::ERROR, "Failed to create window!");
 		std::exit(EXIT_FAILURE);
 	}
 
 	// Set Mouse move callback function
-	window_manager->setMouseMoveCallbackFunction(mouse_move_callback);
-
-	// Initialize OpenGL Context
-	if (!window_manager->createGLContext()) {
-		io::logMessage(io::LogLevel::EERROR, "Failed to create OpenGL Context!");
-		std::exit(EXIT_FAILURE);
-	}
-
+	//window_manager->setMouseMoveCallbackFunction(mouse_move_callback);
+	
 	renderer = CreateGLRenderer();
 	
-	if (!renderer->init_renderer(window_manager->win32_getWindowHandle(), "#version 330")) {
-		io::logMessage(io::LogLevel::EERROR, "Failed to intialize renderer!");
+	if (!renderer->init_renderer(window_manager->getWindowHandle(), "#version 460")) {
+		io::logMessage(io::LogLevel::ERROR, "Failed to intialize renderer!");
 		std::exit(EXIT_FAILURE);
 	}
 

@@ -10,7 +10,7 @@ struct EclipseRenderer {
 	* @param version: opengl version (for example: "#version 330")
 	* @return did initalization succeed
 	*/
-	bool (*init_renderer)(void* hwnd, const char* version);
+	bool (*init_renderer)(GLFWwindow* pwindow, const char* version);
 	/**
 	Starts frame for UI
 	*/

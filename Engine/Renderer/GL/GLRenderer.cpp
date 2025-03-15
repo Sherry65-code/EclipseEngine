@@ -1,16 +1,18 @@
 #include "GLRenderer.hpp"
 #include <Engine/Standard/IO.hpp>
-//#include <windows.h>
+#include <GLFW/glfw3.h>
 
-bool EGL::_INIT(void* HWND, const char* gl_version) {
+bool EGL::_INIT(GLFWwindow* pwindow, const char* gl_version) {
 	
+	glfwMakeContextCurrent(pwindow);
+
 	if (!gladLoadGL()) {
-		io::logMessage(io::LogLevel::EDEBUG, "gladLoadGL failed!");
+		io::logMessage(io::LogLevel::DEBUG, "gladLoadGL failed!");
 		return false;
 	}
 
 	// initialize imgui
-	_INIT_IMGUI(HWND, gl_version);
+	_INIT_IMGUI(pwindow, gl_version);
 
 	return true;
 }

@@ -7,10 +7,10 @@
 namespace io {
 
     enum class LogLevel {
-        EINFO,
-        EWARNING,
-        EERROR,
-        EDEBUG
+        INFO,
+        WARNING,
+        ERROR,
+        DEBUG
     };
 
     void log(LogLevel level, fmt::string_view format, fmt::format_args args);

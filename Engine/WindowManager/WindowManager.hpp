@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <GLFW/glfw3.h>
+#include <Engine/Standard/Types.hpp>
 
 class WindowManager {
 public:
@@ -19,7 +21,7 @@ public:
 	* @param window_create_info Takes window creation struct
 	* @return Was window creation successfull
 	*/
-	bool createNewWindow(WindowCreateInfo& window_create_info);
+	b32 createNewWindow(WindowCreateInfo& window_create_info);
 	/**
 	* Updates window to show changes
 	* @param none
@@ -33,23 +35,17 @@ public:
 	*/
 	bool shouldClose();
 	/**
-	* Creates OpenGL Context
-	* @param none
-	* @return is opengl context creation successfull
-	*/
-	bool createGLContext();
-	/**
-	* Returns Window Handle
-	* @param none
-	* @return void pointer window handle (Returns nullptr on linux)
-	*/
-	void* win32_getWindowHandle();
-	/**
 	* Set Mouse move callback function
 	* @param MouseMoveCallbackFunction
 	* @return void
 	*/
 	void setMouseMoveCallbackFunction(MouseMoveCallbackFunction mmcf);
+	/**
+	* Return window handle
+	* @param none
+	* @return struct GLFWwindow pointer
+	*/
+	GLFWwindow* getWindowHandle();
 
 	~WindowManager();
 };
