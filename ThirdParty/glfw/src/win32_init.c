@@ -331,6 +331,8 @@ static void createKeyTables(void)
     }
 }
 
+void* __hwnd__ = NULL;
+
 // Window procedure for the hidden helper window
 //
 static LRESULT CALLBACK helperWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

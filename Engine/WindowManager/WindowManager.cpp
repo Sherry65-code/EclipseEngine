@@ -1,4 +1,14 @@
 #include "WindowManager.hpp"
+#ifdef _WIN32
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
+#include <dwmapi.h>
+#pragma comment(lib, "dwmapi.lib")
+
+#ifndef DWMA_USE_IMMERSIVE_DARK_MODE
+#define DWMA_USE_IMMERSIVE_DARK_MODE 20
+#endif
+#endif
 
 static GLFWwindow* window = nullptr;
 
@@ -45,9 +55,23 @@ void WindowManager::setMouseMoveCallbackFunction(MouseMoveCallbackFunction mmcf)
 
 }
 
+void WindowManager::setWindowResizeCallbackFunction(WindowResizeCallbackFunction wrcf) {
+	glfwSetFramebufferSizeCallback(window, wrcf);
+}
+
 GLFWwindow* WindowManager::getWindowHandle() {
 	return window;
 }
+
+#ifdef _WIN32
+bool WindowManager::switchDarkMode() {
+	HWND hwnd = glfwGetWin32Window(window);
+	BOOL darkMode = TRUE;
+	HRESULT hr = DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &darkMode, sizeof(darkMode));
+	if (FAILED(hr)) return false;
+	return true;
+}
+#endif
 
 WindowManager::~WindowManager() {
 	if (window) {

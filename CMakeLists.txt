@@ -25,6 +25,8 @@ file(GLOB_RECURSE EngineCode "Engine/*.cpp" "Engine/*.hpp" "Engine/*.c")
 # added compiler options
 if (MSVC)
     add_compile_options("/utf-8")
+else()
+    add_compile_options("-finput-charset=UTF-8 -fexec-charset=UTF-8")
 endif()
 
 # added executable

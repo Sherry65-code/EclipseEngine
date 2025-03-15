@@ -1,12 +1,13 @@
 #pragma once
 #include <string>
-#include <GLFW/glfw3.h>
 #include <Engine/Standard/Types.hpp>
+#include <GLFW/glfw3.h>
 
 class WindowManager {
 public:
 
 	typedef void (*MouseMoveCallbackFunction)(bool*, int x, int y);
+	typedef void (*WindowResizeCallbackFunction)(GLFWwindow*, int x, int y);
 
 	struct WindowCreateInfo {
 		std::string title;
@@ -41,11 +42,21 @@ public:
 	*/
 	void setMouseMoveCallbackFunction(MouseMoveCallbackFunction mmcf);
 	/**
+	* Set Window Resize callback function
+	* @param WindowResizeCallbackFunction
+	* @return void
+	*/
+	void setWindowResizeCallbackFunction(WindowResizeCallbackFunction wrcf);
+	/**
 	* Return window handle
 	* @param none
 	* @return struct GLFWwindow pointer
 	*/
 	GLFWwindow* getWindowHandle();
+	
+	#ifdef _WIN32
+	bool switchDarkMode();
+	#endif
 
 	~WindowManager();
 };

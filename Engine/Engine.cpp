@@ -6,9 +6,17 @@
 
 #include <memory>
 
+void RenderCustomTitleBar(GLFWwindow*);
+void WindowResizeCallback(GLFWwindow*, int, int);
+void WindowFocusCallback(GLFWwindow*, int);
+
 // Global vars
 std::unique_ptr<WindowManager> window_manager;
 std::shared_ptr<EclipseRenderer> renderer;
+
+int window_height = -1;
+int window_width = -1;
+bool isWindowFocused{};
 
 int main() {
 	// Fill Window Creation Struct
@@ -18,6 +26,9 @@ int main() {
 	window_create_info.height = 600;
 	window_create_info.resizable = true;
 	window_create_info.fullscreen = false;
+
+	window_width = window_create_info.width;
+	window_height = window_create_info.height;
 	
 	// Initialize window
 	window_manager = std::make_unique<WindowManager>();
@@ -25,6 +36,13 @@ int main() {
 		io::logMessage(io::LogLevel::ERROR, "Failed to create window!");
 		std::exit(EXIT_FAILURE);
 	}
+
+#ifdef _WIN32
+	window_manager->switchDarkMode();
+#endif
+
+	window_manager->setWindowResizeCallbackFunction(WindowResizeCallback);
+	glfwSetWindowFocusCallback(window_manager->getWindowHandle(), WindowFocusCallback);
 
 	// Set Mouse move callback function
 	//window_manager->setMouseMoveCallbackFunction(mouse_move_callback);
@@ -39,6 +57,8 @@ int main() {
 	// TEST
 	
 	// TEST END
+
+	GLFWwindow* pwindow = window_manager->getWindowHandle();
 
 	// Mainloop
 	while (!window_manager->shouldClose()) {
@@ -58,4 +78,13 @@ int main() {
 	}
 
 	renderer->cleanup();
+}
+
+void WindowResizeCallback(GLFWwindow* w, int x, int y) {
+	window_width = x;
+	window_height = y;
+}
+
+void WindowFocusCallback(GLFWwindow* w, int f) {
+	isWindowFocused = (bool)f;
 }
