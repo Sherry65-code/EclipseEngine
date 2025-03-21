@@ -1,6 +1,13 @@
 #include "Runtime.hpp"
 
 #include <Runtime/Standard/Window.hpp>
+#include <Runtime/Driver/VK/VulkanMain.hpp>
+#include <Runtime/Standard/IO.hpp>
+
+#include <memory>
+
+std::shared_ptr<Window> window{};
+std::shared_ptr<evk> driver{};
 
 void EclipseRuntime::Init() {
     // Initialize the runtime
@@ -11,13 +18,25 @@ void EclipseRuntime::Init() {
     window_create_info.fullscreen = false;
     window_create_info.resizable = false;
     
-    Window window(window_create_info);
-    window.darkMode(true);
+    window = std::make_shared<Window>(window_create_info);
+    window->darkMode(true);
 
-    while (!window.shouldClose()) {
-        window.update();
-    }
+    // Vulkan Init
+    driver = std::make_shared<evk>();
     
+    try {
+        driver->createInstance();
+        driver->pickPhysicalDevice();
+        driver->createLogicalDevice();
+    }
+    catch (const std::exception& exception) {
+        const std::string exception_message = exception.what();
+        io::logMessage(io::LogLevel::ERROR, "{}", exception_message);
+    }
+
+    //while (!window->shouldClose()) {
+    //    window->update();
+    //}
 }
 
 void EclipseRuntime::Shutdown() {
