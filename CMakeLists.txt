@@ -23,6 +23,7 @@ file(GLOB VOLK_SOURCES "Engine/External/volk/*.c" "Engine/External/volk/*.h")
 
 if (MSVC)
     add_compile_options(/utf-8)
+    set_property(GLOBAL PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/Engine")
 endif()
 
 add_library(Runtime ${RUNTIME_SOURCES})

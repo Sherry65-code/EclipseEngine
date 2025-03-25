@@ -32,6 +32,8 @@ void EclipseRuntime::Init() {
         driver->createLogicalDevice();
         driver->createSwapChain();
         driver->createImageViews();
+        driver->createRenderPass();
+        driver->createGraphicsPipeline();
     }
     catch (const std::exception& exception) {
         const std::string exception_message = exception.what();

@@ -20,4 +20,9 @@ namespace io {
         log(level, format, fmt::make_format_args(std::forward<Args>(args)...));
     }
 
+    template <typename... Args>
+    void print(fmt::format_string<Args...> format, Args&&... args) {
+        log(LogLevel::INFO, format, fmt::make_format_args(std::forward<Args>(args)...));
+    }
+
 }
