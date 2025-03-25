@@ -27,6 +27,12 @@ private:
 	VkPipelineLayout pipelineLayout{};
 	VkRenderPass renderPass{};
 	VkPipeline graphicsPipeline{};
+	std::vector<VkFramebuffer> swapchainFrameBuffers{};
+	VkCommandPool commandPool{};
+	VkSemaphore imageAvailableSemaphore{};
+	VkSemaphore renderFinishedSemaphore{};
+	VkFence inFlightFence{};
+	VkCommandBuffer commandBuffer{};
 
 	struct QueueFamilyIndices {
 		std::optional<uint32_t> graphicsFamily;
@@ -52,6 +58,7 @@ private:
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 	VkShaderModule createShaderModule(const std::vector<char>& code);
+	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 
 public:
 	void passWindowPointer(void* window);
@@ -64,6 +71,11 @@ public:
 	void createImageViews();
 	void createRenderPass();
 	void createGraphicsPipeline();
+	void createFramebuffers();
+	void createCommandPool();
+	void createCommandBuffer();
+	void createSyncObjects();
+	void drawFrame();
 
 	~evk();
 };

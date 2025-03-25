@@ -34,15 +34,20 @@ void EclipseRuntime::Init() {
         driver->createImageViews();
         driver->createRenderPass();
         driver->createGraphicsPipeline();
+        driver->createFramebuffers();
+        driver->createCommandPool();
+        driver->createCommandBuffer();
+        driver->createSyncObjects();
     }
     catch (const std::exception& exception) {
         const std::string exception_message = exception.what();
         io::logMessage(io::LogLevel::ERROR, "{}", exception_message);
     }
 
-    //while (!window->shouldClose()) {
-    //    window->update();
-    //}
+    while (!window->shouldClose()) {
+        window->update();
+        driver->drawFrame();
+    }
 }
 
 void EclipseRuntime::Shutdown() {
