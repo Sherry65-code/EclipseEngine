@@ -18,4 +18,5 @@ public:
     bool shouldClose();
     void update();
     bool darkMode(bool dark);
+    void* getWindowHandle();
 };

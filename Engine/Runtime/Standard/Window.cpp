@@ -43,6 +43,10 @@ Window::~Window() {
     glfwDestroyWindow(window);
     glfwTerminate();
 }
+void* Window::getWindowHandle() {
+    return window;
+}
+
 
 #ifdef _WIN32
 bool Window::darkMode(bool dark) {

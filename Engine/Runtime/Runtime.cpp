@@ -7,7 +7,7 @@
 #include <memory>
 
 std::shared_ptr<Window> window{};
-std::shared_ptr<evk> driver{};
+std::unique_ptr<evk> driver{};
 
 void EclipseRuntime::Init() {
     // Initialize the runtime
@@ -22,12 +22,16 @@ void EclipseRuntime::Init() {
     window->darkMode(true);
 
     // Vulkan Init
-    driver = std::make_shared<evk>();
+    driver = std::make_unique<evk>();
     
     try {
+        driver->passWindowPointer(window->getWindowHandle());
         driver->createInstance();
+        driver->createSurface();
         driver->pickPhysicalDevice();
         driver->createLogicalDevice();
+        driver->createSwapChain();
+        driver->createImageViews();
     }
     catch (const std::exception& exception) {
         const std::string exception_message = exception.what();
