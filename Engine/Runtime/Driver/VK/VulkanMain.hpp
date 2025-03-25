@@ -62,6 +62,9 @@ private:
 
 public:
 	void passWindowPointer(void* window);
+	
+	void initalizeDriver();
+	
 	void createInstance();
 	void setupDebugMessenger();
 	void createSurface();
@@ -75,6 +78,7 @@ public:
 	void createCommandPool();
 	void createCommandBuffer();
 	void createSyncObjects();
+
 	void drawFrame();
 
 	~evk();

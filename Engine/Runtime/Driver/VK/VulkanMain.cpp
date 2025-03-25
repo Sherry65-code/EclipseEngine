@@ -309,6 +309,21 @@ void evk::passWindowPointer(void* window) {
 	pWindow = (GLFWwindow*)window;
 }
 
+void evk::initalizeDriver() {
+	createInstance();
+	createSurface();
+	pickPhysicalDevice();
+	createLogicalDevice();
+	createSwapChain();
+	createImageViews();
+	createRenderPass();
+	createGraphicsPipeline();
+	createFramebuffers();
+	createCommandPool();
+	createCommandBuffer();
+	createSyncObjects();
+}
+
 void evk::createInstance() {
 	if (volkInitialize() != VK_SUCCESS) throw std::exception("Failed to link vulkan driver to application!");
 
@@ -380,8 +395,8 @@ void evk::pickPhysicalDevice() {
 	VkPhysicalDeviceProperties properties{};
 	vkGetPhysicalDeviceProperties(physicalDevice, &properties);
 
-	io::logMessage(io::LogLevel::INFO, "Device Selected : {}", properties.deviceName);
-	io::logMessage(io::LogLevel::INFO, "Vulkan Version  : {}", properties.driverVersion);
+	io::print("Vulkan Version  : {}", properties.driverVersion);
+	io::print("Device Selected : {}", properties.deviceName);
 }
 
 void evk::createLogicalDevice() {

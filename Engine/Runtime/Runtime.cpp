@@ -26,18 +26,7 @@ void EclipseRuntime::Init() {
     
     try {
         driver->passWindowPointer(window->getWindowHandle());
-        driver->createInstance();
-        driver->createSurface();
-        driver->pickPhysicalDevice();
-        driver->createLogicalDevice();
-        driver->createSwapChain();
-        driver->createImageViews();
-        driver->createRenderPass();
-        driver->createGraphicsPipeline();
-        driver->createFramebuffers();
-        driver->createCommandPool();
-        driver->createCommandBuffer();
-        driver->createSyncObjects();
+        driver->initalizeDriver();
     }
     catch (const std::exception& exception) {
         const std::string exception_message = exception.what();
