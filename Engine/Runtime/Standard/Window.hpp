@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <Runtime/Filesystem/FileSystem.hpp>
 
 namespace Eclipse {
 
@@ -12,6 +13,7 @@ namespace Eclipse {
         int height;
         bool fullscreen;
         bool resizable;
+        RawImage icon;
         WindowResizeFunction framebuffer_resize_callback;
     };
 }

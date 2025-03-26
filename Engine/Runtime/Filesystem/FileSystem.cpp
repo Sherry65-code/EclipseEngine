@@ -2,6 +2,10 @@
 
 #include <filesystem>
 #include <fstream>
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#endif
+#include <External/stb_image.h>
 
 namespace fs = std::filesystem;
 
@@ -33,6 +37,12 @@ std::vector<char> EclipseFileSystem::ReadFileAsBinary(const std::string& file_na
 	file.close();
 
 	return buffer;
+}
+
+Eclipse::RawImage EclipseFileSystem::LoadRawImageFromFile(const std::string& file_name) {
+	Eclipse::RawImage image{};
+	image.pixels = stbi_load(file_name.c_str(), &image.width, &image.height, nullptr, 4);
+	return image;
 }
 
 void EclipseFileSystem::CreateDirectoryIfNotExists(const std::string& directory_name) {

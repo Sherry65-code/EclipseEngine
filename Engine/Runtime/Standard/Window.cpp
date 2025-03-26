@@ -25,9 +25,17 @@ Window::Window(Eclipse::WindowCreateInfo& window_create_info) {
     if (!glfwInit()) return;
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);    
     glfwWindowHint(GLFW_RESIZABLE, window_create_info.resizable);
 
     pwindow = glfwCreateWindow(window_create_info.width, window_create_info.height, window_create_info.title.c_str(), nullptr, nullptr);
+
+    GLFWimage icon{};
+    icon.height = window_create_info.icon.height;
+    icon.width = window_create_info.icon.width;
+    icon.pixels = window_create_info.icon.pixels;
+
+    glfwSetWindowIcon(pwindow, 1, &icon);
 
     if (window_create_info.framebuffer_resize_callback) {
         glfwSetFramebufferSizeCallback(pwindow, (GLFWframebuffersizefun)window_create_info.framebuffer_resize_callback);

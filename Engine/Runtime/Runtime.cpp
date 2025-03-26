@@ -22,6 +22,7 @@ void EclipseRuntime::Init() {
     window_create_info.fullscreen = false;
     window_create_info.resizable = true;
     window_create_info.framebuffer_resize_callback = FRAMEBUFFER_RESIZE_FUNCTION;
+    window_create_info.icon = EclipseFileSystem::LoadRawImageFromFile("Resources/icon.png");
     
     window = std::make_shared<Window>(window_create_info);
     window->darkMode(true);
