@@ -10,7 +10,11 @@
 #include <optional>
 #include <set>
 #include <array>
+#include <chrono>
+
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class evk {
 private:
@@ -36,9 +40,16 @@ private:
 	std::vector<VkSemaphore> renderFinishedSemaphores{};
 	std::vector<VkFence> inFlightFences{};
 	bool framebufferResized{};
+	VkDescriptorSetLayout descriptorSetLayout{};
 
 	VkBuffer vertexBuffer{};
 	VkBuffer indexBuffer{};
+	std::vector<VkBuffer> uniformBuffers{};
+
+	std::vector<void*> uniformBuffersMapped{};
+
+	VkDescriptorPool descriptorPool{};
+	std::vector<VkDescriptorSet> descriptorSets{};
 
 	struct QueueFamilyIndices {
 		std::optional<uint32_t> graphicsFamily;
@@ -52,6 +63,11 @@ private:
 		VkSurfaceCapabilitiesKHR capabilities;
 		std::vector<VkSurfaceFormatKHR> formats;
 		std::vector<VkPresentModeKHR> presentModes;
+	};
+	struct UniformBufferObject {
+		glm::mat4 model;
+		glm::mat4 view;
+		glm::mat4 proj;
 	};
 
 	bool checkValidationLayerSupport();
@@ -67,6 +83,7 @@ private:
 	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const;
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+	void updateUniformBuffer(uint32_t currentImage);
 
 public:
 	void passWindowPointer(void* window);
@@ -85,11 +102,15 @@ public:
 	void createSwapChain();
 	void createImageViews();
 	void createRenderPass();
+	void createDescriptiorSetLayout();
 	void createGraphicsPipeline();
 	void createFramebuffers();
 	void createCommandPool();
 	void createVertexBuffer();
 	void createIndexBuffer();
+	void createUniformBuffers();
+	void createDescriptorPool();
+	void createDescriptorSets();
 	void createCommandBuffer();
 	void createSyncObjects();
 
