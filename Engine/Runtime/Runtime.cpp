@@ -16,7 +16,7 @@ static void FRAMEBUFFER_RESIZE_FUNCTION(void* window, int width, int height) {
 void EclipseRuntime::Init() {
     // Initialize the runtime
     Eclipse::WindowCreateInfo window_create_info{};
-    window_create_info.title = "Hello, World!";
+    window_create_info.title = "Eclipse Engine Demo";
     window_create_info.width = 800;
     window_create_info.height = 600;
     window_create_info.fullscreen = false;

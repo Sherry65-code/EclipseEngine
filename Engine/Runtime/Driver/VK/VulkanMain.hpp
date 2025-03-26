@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <optional>
 #include <set>
+#include <array>
+#include <glm/glm.hpp>
 
 class evk {
 private:
@@ -34,6 +36,7 @@ private:
 	std::vector<VkSemaphore> renderFinishedSemaphores{};
 	std::vector<VkFence> inFlightFences{};
 	bool framebufferResized{};
+	VkBuffer vertexBuffer{};
 
 	struct QueueFamilyIndices {
 		std::optional<uint32_t> graphicsFamily;
@@ -58,8 +61,9 @@ private:
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 	VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
-	VkShaderModule createShaderModule(const std::vector<char>& code);
+	VkShaderModule createShaderModule(const std::vector<char>& code) const;
 	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const;
 
 public:
 	void passWindowPointer(void* window);
@@ -68,7 +72,8 @@ public:
 	void updateFramebuffer();
 
 	void initalizeDriver();
-	
+	void initializeVulkanMemoryAllocator();
+
 	void createInstance();
 	void setupDebugMessenger();
 	void createSurface();
@@ -80,6 +85,7 @@ public:
 	void createGraphicsPipeline();
 	void createFramebuffers();
 	void createCommandPool();
+	void createVertexBuffer();
 	void createCommandBuffer();
 	void createSyncObjects();
 
