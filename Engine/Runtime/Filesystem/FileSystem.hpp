@@ -18,4 +18,7 @@ namespace EclipseFileSystem {
 
 	std::vector<Eclipse::File> ListDirectory(const std::string& directory_address);
 	void CreateDirectoryIfNotExists(const std::string& directory_name);
+	void CreateFileIfNotExists(const std::string& file_name);
+	bool Exists(const std::string& path);
+	void CopyFileOverwrite(const std::string& source, const std::string& dest);
 };

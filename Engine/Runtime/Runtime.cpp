@@ -28,9 +28,9 @@ void EclipseRuntime::Init() {
         driver->passWindowPointer(window->getWindowHandle());
         driver->initalizeDriver();
     }
-    catch (const std::exception& exception) {
-        const std::string exception_message = exception.what();
-        io::logMessage(io::LogLevel::ERROR, "{}", exception_message);
+    catch (const std::runtime_error& re) {
+        const std::string runtime_message = re.what();
+        io::logMessage(io::LogLevel::ERROR, "{}", runtime_message);
     }
 
     while (!window->shouldClose()) {

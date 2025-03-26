@@ -120,7 +120,7 @@ VkPhysicalDevice evk::chooseBestDevice(std::vector<VkPhysicalDevice>& devices) {
 	
 	}
 
-	if (maxScore == 0) throw std::exception("Failed to find a GPU with required features!");
+	if (maxScore == 0) throw std::runtime_error("Failed to find a GPU with required features!");
 
 	return devices[deviceIndex];
 
@@ -245,7 +245,7 @@ VkShaderModule evk::createShaderModule(const std::vector<char>& code) {
 
 	VkShaderModule shaderModule{};
 	if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
-		throw std::exception("Failed to create Shader Module!");
+		throw std::runtime_error("Failed to create Shader Module!");
 	}
 
 	return shaderModule;
@@ -258,7 +258,7 @@ void evk::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex
 	beginInfo.pInheritanceInfo = nullptr;
 
 	if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-		throw std::exception("Failed to begin recording command buffer!");
+		throw std::runtime_error("Failed to begin recording command buffer!");
 	}
 
 	VkRenderPassBeginInfo renderPassInfo{};
@@ -295,7 +295,7 @@ void evk::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex
 	vkCmdEndRenderPass(commandBuffer);
 
 	if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-		throw std::exception("Failed to record command buffer!");
+		throw std::runtime_error("Failed to record command buffer!");
 	}
 }
 
@@ -325,9 +325,9 @@ void evk::initalizeDriver() {
 }
 
 void evk::createInstance() {
-	if (volkInitialize() != VK_SUCCESS) throw std::exception("Failed to link vulkan driver to application!");
+	if (volkInitialize() != VK_SUCCESS) throw std::runtime_error("Failed to link vulkan driver to application!");
 
-	if (enableValidationLayers && !checkValidationLayerSupport()) throw std::exception("Failed to find validation layers!");
+	if (enableValidationLayers && !checkValidationLayerSupport()) throw std::runtime_error("Failed to find validation layers!");
 
 	VkApplicationInfo applicationInfo{};
 	applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -353,7 +353,7 @@ void evk::createInstance() {
 		createInfo.enabledLayerCount = 0;
 	}
 
-	if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) throw std::exception("Failed to create vulkan instance!");
+	if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) throw std::runtime_error("Failed to create vulkan instance!");
 
 	volkLoadInstance(instance);
 
@@ -370,13 +370,13 @@ void evk::setupDebugMessenger() {
 	createInfo.pfnUserCallback = debugCallback;
 	createInfo.pUserData = nullptr;
 
-	if (vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) throw std::exception("Failed to create debug messenger!");
+	if (vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) throw std::runtime_error("Failed to create debug messenger!");
 }
 
 void evk::createSurface() {
-	if (!pWindow) throw std::exception("Window pointer not passed to driver!");
+	if (!pWindow) throw std::runtime_error("Window pointer not passed to driver!");
 	if (glfwCreateWindowSurface(instance, pWindow, nullptr, &surface) != VK_SUCCESS) 
-		throw std::exception("Failed to create window surface!");
+		throw std::runtime_error("Failed to create window surface!");
 }
 
 void evk::pickPhysicalDevice() {
@@ -384,7 +384,7 @@ void evk::pickPhysicalDevice() {
 	vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
 
 	if (!deviceCount) {
-		throw std::exception("Failed to find device with Vulkan Support!");
+		throw std::runtime_error("Failed to find device with Vulkan Support!");
 	}
 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -435,7 +435,7 @@ void evk::createLogicalDevice() {
 		createInfo.enabledLayerCount = 0;
 	}
 
-	if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) throw std::exception("Failed to create logical device!");
+	if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) throw std::runtime_error("Failed to create logical device!");
 
 	vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
 	vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
@@ -486,7 +486,7 @@ void evk::createSwapChain() {
 	createInfo.clipped = VK_TRUE;
 	createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-	if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapchain) != VK_SUCCESS) throw std::exception("Failed to create swap chain!");
+	if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapchain) != VK_SUCCESS) throw std::runtime_error("Failed to create swap chain!");
 
 	vkGetSwapchainImagesKHR(device, swapchain, &imageCount, nullptr);
 	swapchainImages.resize(imageCount);
@@ -517,7 +517,7 @@ void evk::createImageViews() {
 		createInfo.subresourceRange.layerCount = 1;
 
 		if (vkCreateImageView(device, &createInfo, nullptr, &swapchainImageViews[i]) != VK_SUCCESS) {
-			throw std::exception("Failed to create image views");
+			throw std::runtime_error("Failed to create image views");
 		}
 		
 	}
@@ -561,7 +561,7 @@ void evk::createRenderPass() {
 	renderPassInfo.pDependencies = &dependecy;
 
 	if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
-		throw std::exception("Failed to create render pass!");
+		throw std::runtime_error("Failed to create render pass!");
 	}
 }
 
@@ -674,7 +674,7 @@ void evk::createGraphicsPipeline() {
 	pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
 	if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
-		throw std::exception("Failed to create pipeline layout!");
+		throw std::runtime_error("Failed to create pipeline layout!");
 	}
 
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
@@ -696,7 +696,7 @@ void evk::createGraphicsPipeline() {
 	pipelineInfo.basePipelineIndex = -1;
 
 	if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
-		throw std::exception("Failed to create Graphics pipeline!");
+		throw std::runtime_error("Failed to create Graphics pipeline!");
 	}
 
 	vkDestroyShaderModule(device, fragShaderModule, nullptr);
@@ -718,7 +718,7 @@ void evk::createFramebuffers() {
 		framebufferInfo.layers = 1;
 
 		if (vkCreateFramebuffer(device, &framebufferInfo, nullptr, &swapchainFrameBuffers[i]) != VK_SUCCESS) {
-			throw std::exception("Failed to create framebuffer!");
+			throw std::runtime_error("Failed to create framebuffer!");
 		}
 	}
 }
@@ -732,7 +732,7 @@ void evk::createCommandPool() {
 	poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
 
 	if (vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-		throw std::exception("Failed to create command pool!");
+		throw std::runtime_error("Failed to create command pool!");
 	}
 }
 
@@ -744,7 +744,7 @@ void evk::createCommandBuffer() {
 	allocInfo.commandBufferCount = 1;
 
 	if (vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer) != VK_SUCCESS) {
-		throw std::exception("Failed to allocate command buffers!");
+		throw std::runtime_error("Failed to allocate command buffers!");
 	}
 }
 
@@ -757,7 +757,7 @@ void evk::createSyncObjects() {
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
 	if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS || vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS || vkCreateFence(device, &fenceInfo, nullptr, &inFlightFence) != VK_SUCCESS) {
-		throw std::exception("Failed to create semaphores!");
+		throw std::runtime_error("Failed to create semaphores!");
 	}
 }
 
@@ -786,7 +786,7 @@ void evk::drawFrame() {
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
 	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFence) != VK_SUCCESS) {
-		throw std::exception("Failed to submit draw command buffer!");
+		throw std::runtime_error("Failed to submit draw command buffer!");
 	}
 
 	VkPresentInfoKHR presentInfo{};

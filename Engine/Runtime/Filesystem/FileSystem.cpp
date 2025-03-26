@@ -8,7 +8,7 @@ namespace fs = std::filesystem;
 std::string EclipseFileSystem::ReadFileAsText(const std::string& file_name) {
 	std::ifstream file(file_name, std::ios::in | std::ios::ate);
 	if (!file.is_open())
-		throw std::exception("Failed to open file!");
+		throw std::runtime_error("Failed to open file!");
 
 	size_t fileSize = static_cast<size_t>(file.tellg());
 	std::string content(fileSize, '\0');
@@ -23,7 +23,7 @@ std::string EclipseFileSystem::ReadFileAsText(const std::string& file_name) {
 std::vector<char> EclipseFileSystem::ReadFileAsBinary(const std::string& file_name) {
 	std::ifstream file(file_name, std::ios::binary | std::ios::ate);
 	if (!file.is_open())
-		throw std::exception("Failed to open file!");
+		throw std::runtime_error("Failed to open file!");
 
 	size_t fileSize = static_cast<size_t>(file.tellg());
 	std::vector<char> buffer(fileSize);
@@ -37,7 +37,7 @@ std::vector<char> EclipseFileSystem::ReadFileAsBinary(const std::string& file_na
 
 void EclipseFileSystem::CreateDirectoryIfNotExists(const std::string& directory_name) {
 	try { fs::create_directory(directory_name); }
-	catch (const std::exception& e) {};
+	catch (const std::runtime_error& e) {};
 }
 
 std::vector<Eclipse::File> EclipseFileSystem::ListDirectory(const std::string& directory_address) {
@@ -52,8 +52,23 @@ std::vector<Eclipse::File> EclipseFileSystem::ListDirectory(const std::string& d
 			files.push_back(file);
 		}
 	}
-	catch (const std::exception& e) {
-		throw std::exception(e.what());
+	catch (const std::runtime_error& e) {
+		throw std::runtime_error(e.what());
 	}
 	return files;
+}
+
+void EclipseFileSystem::CreateFileIfNotExists(const std::string& file_name) {
+	if (!fs::exists(file_name)) {
+		std::ofstream file(file_name);
+		if (file); else throw std::runtime_error("Unable to create file!");
+	}
+}
+
+bool EclipseFileSystem::Exists(const std::string& path) {
+	return fs::exists(path);
+}
+
+void EclipseFileSystem::CopyFileOverwrite(const std::string & source, const std::string & dest) {
+	fs::copy_file(source, dest, fs::copy_options::overwrite_existing);
 }
