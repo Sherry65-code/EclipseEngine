@@ -61,13 +61,20 @@ struct Vertex {
 };
 
 const std::vector<Vertex> vertices = {
-	{{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
-	{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-	{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+	{{-0.5f, -0.5f},{1.0f, 0.0f, 0.0f}},
+	{{ 0.5f, -0.5f},{0.0f, 1.0f, 0.0f}},
+	{{ 0.5f,  0.5f},{0.0f, 0.0f, 1.0f}},
+	{{-0.5f,  0.5f},{1.0f, 1.0f, 1.0f}}
 };
 
-VmaAllocation vertexBufferAllocation{};
+const std::vector<uint16_t> indices = {
+	0, 1, 2, 2, 3, 0
+};
+
 VmaAllocator allocator{};
+
+VmaAllocation vertexBufferAllocation{};
+VmaAllocation indexBufferAllocation{};
 
 // HELPERS
 
@@ -323,6 +330,8 @@ void evk::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex
 	VkDeviceSize offsets[] = { 0 };
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
+	vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+
 	VkViewport viewport{};
 	viewport.x = 0.0f;
 	viewport.y = 0.0f;
@@ -337,7 +346,7 @@ void evk::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex
 	scissor.extent = swapchainExtent;
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-	vkCmdDraw(commandBuffer, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
+	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
 	vkCmdEndRenderPass(commandBuffer);
 
@@ -430,6 +439,7 @@ void evk::initalizeDriver() {
 	createFramebuffers();
 	createCommandPool();
 	createVertexBuffer();
+	createIndexBuffer();
 	createCommandBuffer();
 	createSyncObjects();
 }
@@ -874,9 +884,9 @@ void evk::createCommandPool() {
 }
 
 void evk::createVertexBuffer() {
-	
+
 	VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
-	
+
 	VkBuffer stagingBuffer{};
 	VmaAllocation stagingBufferAllocation{};
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, stagingBuffer, stagingBufferAllocation);
@@ -890,7 +900,26 @@ void evk::createVertexBuffer() {
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VMA_MEMORY_USAGE_GPU_ONLY, vertexBuffer, vertexBufferAllocation);
 	copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
 	vmaDestroyBuffer(allocator, stagingBuffer, stagingBufferAllocation);
-	
+
+}
+
+void evk::createIndexBuffer() {
+	VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+
+	VkBuffer stagingBuffer{};
+	VmaAllocation stagingBufferAllocation{};
+	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, stagingBuffer, stagingBufferAllocation);
+
+	void* data{};
+	vmaMapMemory(allocator, stagingBufferAllocation, &data);
+	memcpy(data, indices.data(), static_cast<size_t>(bufferSize));
+	vmaUnmapMemory(allocator, stagingBufferAllocation);
+
+	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VMA_MEMORY_USAGE_GPU_ONLY, indexBuffer, indexBufferAllocation);
+
+	copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+
+	vmaDestroyBuffer(allocator, stagingBuffer, stagingBufferAllocation);
 }
 
 void evk::createCommandBuffer() {
@@ -1028,6 +1057,7 @@ evk::~evk() {
 	vkDeviceWaitIdle(device);
 
 	vmaDestroyBuffer(allocator, vertexBuffer, vertexBufferAllocation);
+	vmaDestroyBuffer(allocator, indexBuffer, indexBufferAllocation);
 	vmaDestroyAllocator(allocator);
 
 	cleanupSwapChain();

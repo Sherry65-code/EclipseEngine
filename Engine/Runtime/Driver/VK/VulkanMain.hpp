@@ -36,7 +36,9 @@ private:
 	std::vector<VkSemaphore> renderFinishedSemaphores{};
 	std::vector<VkFence> inFlightFences{};
 	bool framebufferResized{};
+
 	VkBuffer vertexBuffer{};
+	VkBuffer indexBuffer{};
 
 	struct QueueFamilyIndices {
 		std::optional<uint32_t> graphicsFamily;
@@ -87,6 +89,7 @@ public:
 	void createFramebuffers();
 	void createCommandPool();
 	void createVertexBuffer();
+	void createIndexBuffer();
 	void createCommandBuffer();
 	void createSyncObjects();
 
