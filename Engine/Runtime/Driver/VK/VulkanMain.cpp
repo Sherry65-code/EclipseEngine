@@ -1141,13 +1141,6 @@ void evk::recreateSwapChain() {
 	createSwapChain();
 	createImageViews();
 	createFramebuffers();
-
-	for (size_t i = 0; i < uniformBuffers.size(); i++) {
-		vmaUnmapMemory(allocator, uniformBuffersAllocation[i]);
-		uniformBuffersMapped[i] = nullptr;
-		vmaDestroyBuffer(allocator, uniformBuffers[i], uniformBuffersAllocation[i]);
-	}
-	createUniformBuffers();
 }
 
 void evk::cleanupSwapChain() {
