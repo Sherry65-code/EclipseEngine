@@ -28,6 +28,10 @@ Window::Window(Eclipse::WindowCreateInfo& window_create_info) {
     glfwWindowHint(GLFW_RESIZABLE, window_create_info.resizable);
 
     window = glfwCreateWindow(window_create_info.width, window_create_info.height, window_create_info.title.c_str(), nullptr, nullptr);
+
+    if (window_create_info.framebuffer_resize_callback) {
+        glfwSetFramebufferSizeCallback(window, (GLFWframebuffersizefun)window_create_info.framebuffer_resize_callback);
+    }
 }
 
 bool Window::shouldClose() {

@@ -4,6 +4,7 @@
 #include <sstream>
 #include <optional>
 #include <Runtime/Standard/IO.hpp>
+
 static uint32_t shader_resource_counter = 0;
 
 Eclipse::ShaderObject EclipseResources::CreateShaderObject(std::string glsl_file_path) {

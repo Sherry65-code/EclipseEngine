@@ -29,10 +29,11 @@ private:
 	VkPipeline graphicsPipeline{};
 	std::vector<VkFramebuffer> swapchainFrameBuffers{};
 	VkCommandPool commandPool{};
-	VkSemaphore imageAvailableSemaphore{};
-	VkSemaphore renderFinishedSemaphore{};
-	VkFence inFlightFence{};
-	VkCommandBuffer commandBuffer{};
+	std::vector<VkCommandBuffer> commandBuffers{};
+	std::vector<VkSemaphore> imageAvailableSemaphores{};
+	std::vector<VkSemaphore> renderFinishedSemaphores{};
+	std::vector<VkFence> inFlightFences{};
+	bool framebufferResized{};
 
 	struct QueueFamilyIndices {
 		std::optional<uint32_t> graphicsFamily;
@@ -62,7 +63,10 @@ private:
 
 public:
 	void passWindowPointer(void* window);
-	
+	void recreateSwapChain();
+	void cleanupSwapChain();
+	void updateFramebuffer();
+
 	void initalizeDriver();
 	
 	void createInstance();

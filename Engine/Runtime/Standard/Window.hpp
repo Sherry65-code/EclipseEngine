@@ -7,6 +7,7 @@ namespace Eclipse {
         int height;
         bool fullscreen;
         bool resizable;
+        void* framebuffer_resize_callback;
     };
 }
 

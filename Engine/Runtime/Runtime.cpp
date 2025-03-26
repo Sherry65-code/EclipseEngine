@@ -9,6 +9,10 @@
 std::shared_ptr<Window> window{};
 std::unique_ptr<evk> driver{};
 
+static void FRAMEBUFFER_RESIZE_FUNCTION(void* window, int width, int height) {
+    driver->updateFramebuffer();
+}
+
 void EclipseRuntime::Init() {
     // Initialize the runtime
     Eclipse::WindowCreateInfo window_create_info{};
@@ -16,7 +20,8 @@ void EclipseRuntime::Init() {
     window_create_info.width = 800;
     window_create_info.height = 600;
     window_create_info.fullscreen = false;
-    window_create_info.resizable = false;
+    window_create_info.resizable = true;
+    window_create_info.framebuffer_resize_callback = FRAMEBUFFER_RESIZE_FUNCTION;
     
     window = std::make_shared<Window>(window_create_info);
     window->darkMode(true);
