@@ -64,6 +64,7 @@ private:
 	VkShaderModule createShaderModule(const std::vector<char>& code) const;
 	void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const;
+	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
 public:
 	void passWindowPointer(void* window);

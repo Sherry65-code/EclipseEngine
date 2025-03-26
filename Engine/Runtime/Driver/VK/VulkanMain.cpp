@@ -72,6 +72,7 @@ VmaAllocator allocator{};
 // HELPERS
 
 
+void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, VkBuffer& buffer, VmaAllocation& allocation);
 
 
 
@@ -269,7 +270,7 @@ VkExtent2D evk::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
 
 		VkExtent2D actualExtent = {
 			static_cast<uint32_t>(width),
-			static_cast<uint32_t>(height)
+				static_cast<uint32_t>(height)
 		};
 
 		actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
@@ -315,13 +316,13 @@ void evk::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex
 	renderPassInfo.pClearValues = &clearColor;
 
 	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-	
+
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-	
+
 	VkBuffer vertexBuffers[] = { vertexBuffer };
 	VkDeviceSize offsets[] = { 0 };
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-		
+
 	VkViewport viewport{};
 	viewport.x = 0.0f;
 	viewport.y = 0.0f;
@@ -354,8 +355,56 @@ uint32_t evk::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properti
 			return i;
 		}
 	}
-	
+
 	throw std::runtime_error("Failed to find suitable memory type!");
+}
+
+void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VmaMemoryUsage memoryUsage, VkBuffer& buffer, VmaAllocation& allocation) {
+	VkBufferCreateInfo bufferInfo{};
+	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bufferInfo.size = size;
+	bufferInfo.usage = usage;
+	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	VmaAllocationCreateInfo allocCreateInfo{};
+	allocCreateInfo.usage = memoryUsage;
+
+	if (vmaCreateBuffer(allocator, &bufferInfo, &allocCreateInfo, &buffer, &allocation, nullptr) != VK_SUCCESS) {
+		throw std::runtime_error("Failed to create buffer!");
+	}
+ }
+
+void evk::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
+	VkCommandBufferAllocateInfo allocInfo{};
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandPool = commandPool;
+	allocInfo.commandBufferCount = 1;
+
+	VkCommandBuffer commandBuffer;
+	vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+
+	VkCommandBufferBeginInfo beginInfo{};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+	VkBufferCopy copyRegion{};
+	copyRegion.size = size;
+	vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+
+	vkEndCommandBuffer(commandBuffer);
+
+	VkSubmitInfo submitInfo{};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffer;
+
+	vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(graphicsQueue);
+
+	vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 }
 
 // VULKAN_MAIN
@@ -825,26 +874,23 @@ void evk::createCommandPool() {
 }
 
 void evk::createVertexBuffer() {
-	VkBufferCreateInfo bufferInfo{};
-	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferInfo.size = sizeof(vertices[0]) * vertices.size();
-	bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	
-	VmaAllocationCreateInfo allocCreateInfo{};
-	allocCreateInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-
-	if (vmaCreateBuffer(allocator, &bufferInfo, &allocCreateInfo, &vertexBuffer, &vertexBufferAllocation, nullptr) != VK_SUCCESS) {
-		throw std::runtime_error("Failed to create vertex buffer! (CPU TO GPU SHARED MEMORY)");
-	}
+	VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
+	
+	VkBuffer stagingBuffer{};
+	VmaAllocation stagingBufferAllocation{};
+	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VMA_MEMORY_USAGE_CPU_ONLY, stagingBuffer, stagingBufferAllocation);
 
 	// Move data to GPU
 	void* data{};
-	vmaMapMemory(allocator, vertexBufferAllocation, &data);
-	memcpy(data, vertices.data(), static_cast<size_t>(bufferInfo.size));
-	vmaFlushAllocation(allocator, vertexBufferAllocation, 0, VK_WHOLE_SIZE);
-	vmaUnmapMemory(allocator, vertexBufferAllocation);
+	vmaMapMemory(allocator, stagingBufferAllocation, &data);
+	memcpy(data, vertices.data(), static_cast<size_t>(bufferSize));
+	vmaUnmapMemory(allocator, stagingBufferAllocation);
 
+	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VMA_MEMORY_USAGE_GPU_ONLY, vertexBuffer, vertexBufferAllocation);
+	copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+	vmaDestroyBuffer(allocator, stagingBuffer, stagingBufferAllocation);
+	
 }
 
 void evk::createCommandBuffer() {
