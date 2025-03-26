@@ -1,6 +1,6 @@
 #include "Window.hpp"
 
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 #ifdef _WIN32
 
@@ -17,7 +17,7 @@
 
 #endif
 
-GLFWwindow* window{};
+GLFWwindow* pwindow{};
 
 // DID NOT IMPLEMENT FULLSCREEN FEATURE
 
@@ -27,15 +27,15 @@ Window::Window(Eclipse::WindowCreateInfo& window_create_info) {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, window_create_info.resizable);
 
-    window = glfwCreateWindow(window_create_info.width, window_create_info.height, window_create_info.title.c_str(), nullptr, nullptr);
+    pwindow = glfwCreateWindow(window_create_info.width, window_create_info.height, window_create_info.title.c_str(), nullptr, nullptr);
 
     if (window_create_info.framebuffer_resize_callback) {
-        glfwSetFramebufferSizeCallback(window, (GLFWframebuffersizefun)window_create_info.framebuffer_resize_callback);
+        glfwSetFramebufferSizeCallback(pwindow, (GLFWframebuffersizefun)window_create_info.framebuffer_resize_callback);
     }
 }
 
 bool Window::shouldClose() {
-    return glfwWindowShouldClose(window);
+    return glfwWindowShouldClose(pwindow);
 }
 
 void Window::update() {
@@ -43,18 +43,18 @@ void Window::update() {
 }
 
 Window::~Window() {
-    if (!window) return;
-    glfwDestroyWindow(window);
+    if (!pwindow) return;
+    glfwDestroyWindow(pwindow);
     glfwTerminate();
 }
 void* Window::getWindowHandle() {
-    return window;
+    return pwindow;
 }
 
 
 #ifdef _WIN32
 bool Window::darkMode(bool dark) {
-    HWND hwnd = glfwGetWin32Window(window);
+    HWND hwnd = glfwGetWin32Window(pwindow);
     BOOL darkMode = dark;
     HRESULT hr = DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &darkMode, sizeof(darkMode));
     if (FAILED(hr)) return false;

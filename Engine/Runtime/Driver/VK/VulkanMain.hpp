@@ -2,7 +2,7 @@
 
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
-#include <Volk/volk.h>
+#include <volk.h>
 #include <vector>
 #include <string>
 #include <cstring>

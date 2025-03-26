@@ -1,13 +1,18 @@
+#pragma once
+
 #include <string>
 
 namespace Eclipse {
+
+    typedef void (*WindowResizeFunction)(void*, int, int);
+
     struct WindowCreateInfo {
         std::string title;
         int width;
         int height;
         bool fullscreen;
         bool resizable;
-        void* framebuffer_resize_callback;
+        WindowResizeFunction framebuffer_resize_callback;
     };
 }
 
